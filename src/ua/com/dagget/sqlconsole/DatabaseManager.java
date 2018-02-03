@@ -1,6 +1,7 @@
 package ua.com.dagget.sqlconsole;
 
 import java.sql.*;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -32,6 +33,21 @@ public class DatabaseManager {
         }
         rs.close();
         stmt.close();
+
+        //table name
+
+        stmt = connection.createStatement();
+        rs = stmt.executeQuery("SELECT table_name FROM information_schema.tables WHERE table_schema='public' ");
+        String [] tables = new String[10];
+        int index = 0;
+        while (rs.next()){
+            tables[index++] = rs.getString("table_name");
+            //System.out.println("table name: " + rs.getString("table_name"));
+        }
+        tables = Arrays.copyOf(tables, index + 1, String[].class);
+        rs.close();
+        stmt.close();
+
 
        //update
         PreparedStatement ps = connection.prepareStatement("UPDATE public.user SET password = ? WHERE id > 300");

@@ -1,6 +1,7 @@
 package ua.com.dagget.sqlconsole;
 
 import java.sql.*;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -20,7 +21,7 @@ public class Main {
 
         //insert
         Statement stmt = connection.createStatement();
-        stmt.executeUpdate("INSERT INTO public.user (id, name, password)" + "VALUES (700, 'Stiven', 'Pupkin')");
+        stmt.executeUpdate("INSERT INTO public.user (id, name, password)" + "VALUES (900, 'Stiven', 'Pupkin')");
 
         //select
         stmt = connection.createStatement();
@@ -32,6 +33,21 @@ public class Main {
         }
         rs.close();
         stmt.close();
+
+        //table name
+
+        stmt = connection.createStatement();
+        rs = stmt.executeQuery("SELECT table_name FROM information_schema.tables WHERE table_schema='public' ");
+        String [] tables = new String[10];
+        int index = 0;
+        while (rs.next()){
+            tables[index++] = rs.getString("table_name");
+            //System.out.println("table name: " + rs.getString("table_name"));
+        }
+        tables = Arrays.copyOf(tables, index + 1, String[].class);
+        rs.close();
+        stmt.close();
+
 
        //update
         PreparedStatement ps = connection.prepareStatement("UPDATE public.user SET password = ? WHERE id > 300");
