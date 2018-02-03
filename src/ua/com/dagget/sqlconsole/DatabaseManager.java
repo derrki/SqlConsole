@@ -10,6 +10,8 @@ import java.util.Random;
 public class DatabaseManager {
 
 
+    private Connection connection;
+
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
 
 
@@ -17,7 +19,10 @@ public class DatabaseManager {
         String user = "postgres";
         String password = "postgres";
 
-        Connection connection = getConnection(database, user, password);
+        DatabaseManager manager = new DatabaseManager();
+        manager.connect(database, user, password);
+
+        Connection connection = manager.getConnection();
 
         //insert
         Statement stmt = connection.createStatement();
@@ -26,7 +31,7 @@ public class DatabaseManager {
         //select
         stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery("SELECT * FROM public.user WHERE id > 200");
-        while (rs.next()){
+        while (rs.next()) {
             System.out.println("id:" + rs.getString(1));
             System.out.println("name:" + rs.getString(2));
             System.out.println("password:" + rs.getString(3));
@@ -36,20 +41,12 @@ public class DatabaseManager {
 
         //table name
 
-        stmt = connection.createStatement();
-        rs = stmt.executeQuery("SELECT table_name FROM information_schema.tables WHERE table_schema='public' ");
-        String [] tables = new String[10];
-        int index = 0;
-        while (rs.next()){
-            tables[index++] = rs.getString("table_name");
-            //System.out.println("table name: " + rs.getString("table_name"));
-        }
-        tables = Arrays.copyOf(tables, index + 1, String[].class);
-        rs.close();
-        stmt.close();
+        String[] tables = manager.getTableNames();
+
+        System.out.println(Arrays.toString(tables));
 
 
-       //update
+        //update
         PreparedStatement ps = connection.prepareStatement("UPDATE public.user SET password = ? WHERE id > 300");
         String pass = "password_" + new Random().nextInt();
         ps.setString(1, pass);
@@ -65,9 +62,39 @@ public class DatabaseManager {
         connection.close();
     }
 
-    private static Connection getConnection(String database, String user, String password) throws ClassNotFoundException, SQLException {
-        Class.forName("org.postgresql.Driver");
-        return DriverManager.getConnection(
-                "jdbc:postgresql://127.0.0.1:5432/" + database, user , password);
+    public String[] getTableNames() throws SQLException {
+        Statement stmt = connection.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT table_name FROM information_schema.tables WHERE table_schema='public' ");
+
+        String[] tables = new String[10];
+        int index = 0;
+        while (rs.next()) {
+            tables[index++] = rs.getString("table_name");
+        }
+        tables = Arrays.copyOf(tables, index + 1, String[].class);
+        rs.close();
+        stmt.close();
+        return tables;
+    }
+
+    public Connection connect(String database, String user, String password) {
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            connection = DriverManager.getConnection(
+                    "jdbc:postgresql://127.0.0.1:5432/" + database, user, password);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            connection = null;
+        }
+        return null;
+    }
+
+    private Connection getConnection() {
+        return connection;
     }
 }
+

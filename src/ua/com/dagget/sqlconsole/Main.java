@@ -21,7 +21,7 @@ public class Main {
 
         //insert
         Statement stmt = connection.createStatement();
-        stmt.executeUpdate("INSERT INTO public.user (id, name, password)" + "VALUES (900, 'Stiven', 'Pupkin')");
+        stmt.executeUpdate("INSERT INTO public.user (id, name, password)" + "VALUES (1100, 'Stiven', 'Pupkin')");
 
         //select
         stmt = connection.createStatement();
@@ -42,7 +42,7 @@ public class Main {
         int index = 0;
         while (rs.next()){
             tables[index++] = rs.getString("table_name");
-            //System.out.println("table name: " + rs.getString("table_name"));
+            System.out.println("table name: " + rs.getString("table_name"));
         }
         tables = Arrays.copyOf(tables, index + 1, String[].class);
         rs.close();
