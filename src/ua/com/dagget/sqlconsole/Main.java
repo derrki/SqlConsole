@@ -40,6 +40,7 @@ public class Main {
         ps.executeUpdate();
         ps.close();
 
+
         //delete
         stmt = connection.createStatement();
         stmt.executeUpdate("DELETE FROM public.user " + "WHERE id > 100 AND id < 300");
