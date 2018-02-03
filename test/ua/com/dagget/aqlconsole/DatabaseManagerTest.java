@@ -5,6 +5,9 @@ import org.junit.Test;
 import ua.com.dagget.sqlconsole.DatabaseManager;
 
 import java.sql.Connection;
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * 1. Make it work. 2. Make it right. 3. Make it fast
@@ -21,6 +24,7 @@ public class DatabaseManagerTest {
 
     @Test
     public void testGetAllTableNames() {
-
+        String[] tableNames = manager.getTableNames();
+        assertEquals("[contact, user]", Arrays.toString(tableNames));
     }
 }

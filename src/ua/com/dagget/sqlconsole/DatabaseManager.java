@@ -62,19 +62,25 @@ public class DatabaseManager {
         connection.close();
     }
 
-    public String[] getTableNames() throws SQLException {
-        Statement stmt = connection.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT table_name FROM information_schema.tables WHERE table_schema='public' ");
+    public String[] getTableNames() {
+        try {
 
-        String[] tables = new String[10];
-        int index = 0;
-        while (rs.next()) {
-            tables[index++] = rs.getString("table_name");
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT table_name FROM information_schema.tables WHERE table_schema='public' ");
+
+            String[] tables = new String[10];
+            int index = 0;
+            while (rs.next()) {
+                tables[index++] = rs.getString("table_name");
+            }
+            tables = Arrays.copyOf(tables, index, String[].class);
+            rs.close();
+            stmt.close();
+            return tables;
+        }catch (SQLException e){
+            e.printStackTrace();
+            return new String[0];
         }
-        tables = Arrays.copyOf(tables, index + 1, String[].class);
-        rs.close();
-        stmt.close();
-        return tables;
     }
 
     public Connection connect(String database, String user, String password) {
