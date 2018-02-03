@@ -1,6 +1,7 @@
 package ua.com.dagget.sqlconsole;
 
 import java.sql.*;
+import java.util.Random;
 
 /**
  * 1. Make it work. 2. Make it right. 3. Make it fast
@@ -19,7 +20,7 @@ public class Main {
 
         //insert
         Statement stmt = connection.createStatement();
-        stmt.executeUpdate("INSERT INTO public.user (id, name, password)" + "VALUES (600, 'Stiven', 'Pupkin')");
+        stmt.executeUpdate("INSERT INTO public.user (id, name, password)" + "VALUES (700, 'Stiven', 'Pupkin')");
 
         //select
         stmt = connection.createStatement();
@@ -32,7 +33,17 @@ public class Main {
         rs.close();
         stmt.close();
 
+       //update
+        PreparedStatement ps = connection.prepareStatement("UPDATE public.user SET password = ? WHERE id > 300");
+        String pass = "password_" + new Random().nextInt();
+        ps.setString(1, pass);
+        ps.executeUpdate();
+        ps.close();
 
+        //delete
+        stmt = connection.createStatement();
+        stmt.executeUpdate("DELETE FROM public.user " + "WHERE id > 100 AND id < 300");
+        stmt.close();
 
         connection.close();
     }
